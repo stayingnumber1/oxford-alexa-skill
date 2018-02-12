@@ -1,0 +1,34 @@
+{
+  "intents": [
+    {
+      "intent": "OneshotOxfordIntent",
+      "slots": [
+        {
+          "name": "Word",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "intent": "DialogOxfordIntent",
+      "slots": [
+        {
+          "name": "Word",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "intent": "SupportedLanguagesIntent"
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    },
+    {
+      "intent": "AMAZON.StopIntent"
+    },
+    {
+      "intent": "AMAZON.CancelIntent"
+    }
+  ]
+}
