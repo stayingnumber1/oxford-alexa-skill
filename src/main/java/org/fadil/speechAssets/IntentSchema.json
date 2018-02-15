@@ -22,9 +22,6 @@
       "intent": "SupportedLanguagesIntent"
     },
     {
-      "intent": "AMAZON.HelpIntent"
-    },
-    {
       "intent": "AMAZON.StopIntent"
     },
     {
