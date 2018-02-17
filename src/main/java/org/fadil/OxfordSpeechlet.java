@@ -32,6 +32,25 @@ import com.amazonaws.util.json.JSONException;
 import com.amazonaws.util.json.JSONObject;
 import com.amazonaws.util.json.JSONTokener;
 
+/**
+ * This class provides the implementation of an AWS Lambda function that will handle requests
+ * in the form of {@link Intent} from the user. This function basically has two types of interactions:
+ * namely, a one-shot model and a dialog model.
+ * 
+ * The function communicates with an external web service (https://od-api.oxforddictionaries.com/api/)
+ * to get lexical information for a word that the user has requested. The external web service is provided
+ * by Oxford Dictionaries and requires registration to obtain an APP_ID and APP_KEY in order to call
+ * the secure REST endpoints exposed.
+ * 
+ * The ons-shot model and the dialog model are based on the examples provided by Amazon in its
+ * Java Alexa Skills Kit SDK. They can be found here: https://github.com/alexa/skill-samples-java.
+ * 
+ * 
+ * @author Fadil
+ * @version 1.0
+ * @since 17/02/2018
+ *
+ */
 public class OxfordSpeechlet implements SpeechletV2 {
 	
 	private static final String UNDEFINED = "undefined";
@@ -39,7 +58,10 @@ public class OxfordSpeechlet implements SpeechletV2 {
 	private static final String SLOT_WORD = "Word";
 	private static final Logger LOG = LoggerFactory.getLogger(OxfordSpeechlet.class);
 	private static final String ENDPOINT = "https://od-api.oxforddictionaries.com/api/v1/entries/en/";
-
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public SpeechletResponse onIntent(SpeechletRequestEnvelope<IntentRequest> requestEnvelope) {
 		IntentRequest request = requestEnvelope.getRequest(); 
@@ -90,9 +112,9 @@ public class OxfordSpeechlet implements SpeechletV2 {
 			
 			for (int i = 0; i < examples.size(); i++) {
 				examplesBuilder.append("Example " + i)
-							  .append(": ")
-							  .append(examples.get(i))
-							  .append(". ");
+							   .append(": ")
+							   .append(examples.get(i))
+							   .append(". ");
 			}
 		}
 		
@@ -107,14 +129,19 @@ public class OxfordSpeechlet implements SpeechletV2 {
 	}
 
 	/**
-	 * Method to return a response to the user when an invalid request is made.
-	 * @return a {@link SpeechletResponse} object that Alexa will use to return to the user
+	 * Returns a {@code SpeechletResponse} to the user when an invalid request is made.
+	 * @return a SpeechletResponse that Alexa will speak to the user
 	 */
 	private SpeechletResponse handleUnsupportedRequest() {
 		String errorSpeech = "This is unsupported. Please try something else.";
         return newAskResponse(errorSpeech, errorSpeech);
 	}
 
+	/**
+	 * Returns a {@code SpeechletResponse} to the user when a Stop, Cancel or No to examples requests are made.
+	 * @param intent
+	 * @return a SpeechletResponse that Alexa will speak to the user
+	 */
 	private SpeechletResponse handleExitRequest(Intent intent) {
 		String goodbyeSpeech = "Alright. Thank you for using Oxford Word Look up.";
 		SimpleCard card = new SimpleCard();
@@ -127,11 +154,11 @@ public class OxfordSpeechlet implements SpeechletV2 {
 	}
 
 	/**
-	 * Method to return a response to the user when using the Dialog model.
+	 * Returns a {@code SpeechletResponse} to the user when using the Dialog model.
 	 * The Dialog model calls the One-shot model because only one parameter is being passed for now.
 	 * @param intent
 	 * @param session
-	 * @return a {@link SpeechletResponse} object that Alexa will use to return to the user
+	 * @return a SpeechletResponse that Alexa will use to speak to the user to get the word
 	 */
 	private SpeechletResponse handleDialogOxfordRequest(Intent intent, Session session) {
 		Slot wordSlot = intent.getSlot(SLOT_WORD);
@@ -143,16 +170,22 @@ public class OxfordSpeechlet implements SpeechletV2 {
 		}
 	}
 
+	/**
+	 * Returns a {@code SpeechletResponse} to the user when no input is provided.
+	 * @param intent
+	 * @param session
+	 * @return a SpeechletResponse that Alexa will use to query the user again for the word
+	 */
 	private SpeechletResponse handleNoSlotDialogRequest(Intent intent, Session session) {
 		String speechOutput = "Please try again by saying a word.";		
 		return newAskResponse(speechOutput, speechOutput);
 	}
 
 	/**
-	 * Method to return a response to the user when using the One-shot model.
+	 * Returns a {@code SpeechletResponse} to the user when using the One-shot model.
 	 * @param intent
 	 * @param session
-	 * @return a {@link SpeechletResponse} object that Alexa will use to return to the user
+	 * @return a SpeechletResponse object that Alexa will use to return to the user
 	 */
 	private SpeechletResponse handleOneshotOxfordRequest(Intent intent, Session session) {
 		Slot wordSlot = intent.getSlot(SLOT_WORD);
@@ -358,7 +391,10 @@ public class OxfordSpeechlet implements SpeechletV2 {
 		
 		return new WordDetails(lexicalCategory, definition, examples);
 	}
-
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public SpeechletResponse onLaunch(SpeechletRequestEnvelope<LaunchRequest> requestEnvelope) {
 		LOG.info("onLaunch requestId={}, sessionId={}",
@@ -436,14 +472,20 @@ public class OxfordSpeechlet implements SpeechletV2 {
         reprompt.setOutputSpeech(repromptOutputSpeech);
         return SpeechletResponse.newAskResponse(outputSpeech, reprompt);
     }
-
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onSessionEnded(SpeechletRequestEnvelope<SessionEndedRequest> requestEnvelope) {
 		LOG.info("onSessionEnded requestId={}, sessionId={}",
 					requestEnvelope.getRequest().getRequestId(),
 					requestEnvelope.getSession().getSessionId());
 	}
-
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onSessionStarted(SpeechletRequestEnvelope<SessionStartedRequest> requestEnvelope) {
 		LOG.info("onSessionStarted requestId={}, sessionId={}",
