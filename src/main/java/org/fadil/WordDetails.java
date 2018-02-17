@@ -1,21 +1,36 @@
 package org.fadil;
 
+import java.util.List;
+import java.util.Optional;
+
 public class WordDetails {
 	
-	private final String definition;
-	private final String example;
+	private final Optional<String> lexicalCategory;
+	private final Optional<String> definition;
+	private final List<String> examples;
 	
-	public WordDetails(String definition, String example) {
+	public WordDetails(Optional<String> lexicalCategory, Optional<String> definition, List<String> examples) {
+		this.lexicalCategory = lexicalCategory;
 		this.definition = definition;
-		this.example = example;
+		this.examples = examples;
 	}
 
-	public String getDefinition() {
+	public Optional<String> getLexicalCategory() {
+		return lexicalCategory;
+	}
+
+	public Optional<String> getDefinition() {
 		return definition;
 	}
 
-	public String getExample() {
-		return example;
+	public List<String> getExamples() {
+		return examples;
+	}
+
+	@Override
+	public String toString() {
+		return "WordDetails [lexicalCategory=" + lexicalCategory + ", definition=" + definition + ", examples="
+				+ examples + "]";
 	}
 
 }

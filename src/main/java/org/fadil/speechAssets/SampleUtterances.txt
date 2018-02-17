@@ -1,9 +1,0 @@
-DialogOxfordIntent {Word}
-
-OneshotOxfordIntent what is the meaning of {Word}
-
-SupportedLanguagesIntent what languages
-SupportedLanguagesIntent what languages are supported
-SupportedLanguagesIntent which languages are supported
-SupportedLanguagesIntent which languages
-SupportedLanguagesIntent which languages do you know

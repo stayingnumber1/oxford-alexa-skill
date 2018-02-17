@@ -1,0 +1,11 @@
+DialogOxfordIntent {Word}
+DialogOxfordIntent the word {Word}
+
+OneshotOxfordIntent what is the meaning of {Word}
+OneshotOxfordIntent the meaning of {Word}
+OneshotOxfordIntent the meaning of the word {Word}
+OneshotOxfordIntent meaning of the word {Word}
+OneshotOxfordIntent meaning of {Word}
+OneshotOxfordIntent to define {Word}
+OneshotOxfordIntent to define the word {Word}
+OneshotOxfordIntent the word {Word}
