@@ -120,7 +120,7 @@ public class OxfordSpeechlet implements SpeechletV2 {
 		
 		String examplesSpeech = examplesBuilder.toString();
 		SimpleCard card = new SimpleCard();
-		card.setTitle("Oxford Word Look Up");
+		card.setTitle("Word Pooler");
 		card.setContent(examplesSpeech);
 		PlainTextOutputSpeech examplesSpeechOutput = new PlainTextOutputSpeech();
 		examplesSpeechOutput.setText(examplesSpeech);
@@ -143,9 +143,9 @@ public class OxfordSpeechlet implements SpeechletV2 {
 	 * @return a SpeechletResponse that Alexa will speak to the user
 	 */
 	private SpeechletResponse handleExitRequest(Intent intent) {
-		String goodbyeSpeech = "Alright. Thank you for using Oxford Word Look up.";
+		String goodbyeSpeech = "Alright. Thank you for using Word Pooler.";
 		SimpleCard card = new SimpleCard();
-		card.setTitle("Oxford Word Look Up");
+		card.setTitle("Word Pooler");
 		card.setContent(goodbyeSpeech);
 		PlainTextOutputSpeech outputSpeech = new PlainTextOutputSpeech();
         outputSpeech.setText(goodbyeSpeech);
@@ -177,8 +177,9 @@ public class OxfordSpeechlet implements SpeechletV2 {
 	 * @return a SpeechletResponse that Alexa will use to query the user again for the word
 	 */
 	private SpeechletResponse handleNoSlotDialogRequest(Intent intent, Session session) {
-		String speechOutput = "Please try again by saying a word.";		
-		return newAskResponse(speechOutput, speechOutput);
+		String speechOutput = "Please try again by saying a word.";
+		String repromptSpeech = "I'm sorry, I didn't catch that. Can you please say it again?";
+		return newAskResponse(speechOutput, repromptSpeech);
 	}
 
 	/**
@@ -198,7 +199,7 @@ public class OxfordSpeechlet implements SpeechletV2 {
 		WordDetails wordDetails = null;
 		
 		if (builder.length() == 0) {
-			speechOutput = "Sorry, the Oxford service is experiencing a problem. "
+			speechOutput = "Sorry, the Word Pooler service is experiencing a problem. "
 								+ "Please try again later.";
 		} else {
 			try {
@@ -211,7 +212,7 @@ public class OxfordSpeechlet implements SpeechletV2 {
 			}
 		}
 		
-		List<String> examples = wordDetails.getExamples();
+		List<String> examples = wordDetails != null ? wordDetails.getExamples() : null;
 		boolean hasExamples = hasExamples(examples);
 		if (hasExamples) {
 			setExamplesInSession(intent, session, examples);
@@ -223,7 +224,7 @@ public class OxfordSpeechlet implements SpeechletV2 {
 		}
 		
 		SimpleCard card = new SimpleCard();
-		card.setTitle("Oxford Word Look Up");
+		card.setTitle("Word Pooler");
 		card.setContent(speechOutput);
 		PlainTextOutputSpeech outputSpeech = new PlainTextOutputSpeech();
 		outputSpeech.setText(speechOutput);
@@ -263,7 +264,7 @@ public class OxfordSpeechlet implements SpeechletV2 {
 		Optional<String> optLexicalCategory = wordDetails.getLexicalCategory();
 		Optional<String> optdefinition = wordDetails.getDefinition();
 		
-		String lexicalCategory = optLexicalCategory.orElse(UNCATEGORIZED);
+		String lexicalCategory =  optLexicalCategory.orElse(UNCATEGORIZED);
 		String definition = optdefinition.orElse(UNDEFINED);
 		
 		String lexicalCategorySpeechOuput = UNCATEGORIZED.equals(lexicalCategory) ?
@@ -353,8 +354,8 @@ public class OxfordSpeechlet implements SpeechletV2 {
 	 * @throws JSONException
 	 */
 	private WordDetails retrieveWordDetails(JSONObject oxfordResponseObject) throws JSONException {
-		Optional<String> lexicalCategory = null;
-		Optional<String> definition = null;
+		Optional<String> lexicalCategory = Optional.empty();
+		Optional<String> definition = Optional.empty();
 		List<String> examples = new ArrayList<>();
 		
 		if (oxfordResponseObject != null) {
@@ -366,7 +367,7 @@ public class OxfordSpeechlet implements SpeechletV2 {
 			
 			if (lexicalEntries != null) {
 				lexicalCategory = lexicalEntries.getJSONObject(0).has("lexicalCategory") ?
-						Optional.of((String) lexicalEntries.getJSONObject(0).get("lexicalCategory")) : null;
+						Optional.ofNullable((String) lexicalEntries.getJSONObject(0).get("lexicalCategory")) : Optional.empty();
 						
 				JSONArray entries = lexicalEntries.getJSONObject(0).has("entries") ?
 						(JSONArray) lexicalEntries.getJSONObject(0).get("entries") : null;
@@ -377,7 +378,8 @@ public class OxfordSpeechlet implements SpeechletV2 {
 				if (senses != null) {
 					JSONArray definitionsArray = senses.getJSONObject(0).has("definitions") ?
 							(JSONArray) senses.getJSONObject(0).get("definitions") : null;
-					definition = !definitionsArray.isNull(0) ? Optional.of(definitionsArray.getString(0)) : null;
+					definition = definitionsArray != null && !definitionsArray.isNull(0) ?
+							Optional.ofNullable(definitionsArray.getString(0)) : Optional.empty();
 					
 					JSONArray examplesArray = senses.getJSONObject(0).has("examples") ?
 							(JSONArray) senses.getJSONObject(0).get("examples") : null;
@@ -411,11 +413,11 @@ public class OxfordSpeechlet implements SpeechletV2 {
 	private SpeechletResponse getWelcomeResponse() {
 		String whatWordPrompt = "What word would you like information for?";
 		String speechOutput = "<speak>"
-								+ "Welcome. This word look up service is provided by Oxford University Press. "
+								+ "Welcome to Word Pooler. "
 								+ whatWordPrompt
 								+ "</speak>";
 		String repromptText = "I can provide you information for any specific word. "
-								+ "You can simply open Oxford Word Look up and ask a question like, "
+								+ "You can simply open Word Pooler and ask a question like, "
 								+ "what is the meaning of, and say the word you are looking for. "
 								+ whatWordPrompt;
 		
@@ -467,10 +469,13 @@ public class OxfordSpeechlet implements SpeechletV2 {
             repromptOutputSpeech = new PlainTextOutputSpeech();
             ((PlainTextOutputSpeech) repromptOutputSpeech).setText(repromptText);
         }
-
+        
+        SimpleCard card = new SimpleCard();
+        card.setTitle("Word Pooler");
+        card.setContent(stringOutput);
         Reprompt reprompt = new Reprompt();
         reprompt.setOutputSpeech(repromptOutputSpeech);
-        return SpeechletResponse.newAskResponse(outputSpeech, reprompt);
+        return SpeechletResponse.newAskResponse(outputSpeech, reprompt, card);
     }
 	
 	/**

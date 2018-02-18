@@ -1,7 +1,10 @@
 package org.fadil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.amazonaws.util.json.JSONObject;
 
 /**
  * This is a container class to hold the extracted information from
@@ -13,9 +16,9 @@ import java.util.Optional;
  */
 public class WordDetails {
 	
-	private final Optional<String> lexicalCategory;
-	private final Optional<String> definition;
-	private final List<String> examples;
+	private Optional<String> lexicalCategory;
+	private Optional<String> definition;
+	private List<String> examples;
 	
 	public WordDetails(Optional<String> lexicalCategory, Optional<String> definition, List<String> examples) {
 		this.lexicalCategory = lexicalCategory;
@@ -32,6 +35,9 @@ public class WordDetails {
 	}
 
 	public List<String> getExamples() {
+		if (examples == null) {
+			examples = new ArrayList<>();
+		}
 		return examples;
 	}
 
