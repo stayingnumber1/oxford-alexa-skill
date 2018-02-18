@@ -23,9 +23,8 @@ public class OxfordSpeechletRequestStreamHandler extends SpeechletRequestStreamH
 	
 	static {
 		
-		SUPPORTED_APPLICATION_IDS = new HashSet<>();
-		String appId = System.getenv("APP_ID"); // Application Id of the Alexa skill
-		SUPPORTED_APPLICATION_IDS.add(appId);
+		SUPPORTED_APPLICATION_IDS = new HashSet<>(); 
+		SUPPORTED_APPLICATION_IDS.add("amzn1.ask.skill.4f6bdcd9-757f-4f40-b338-75a0cf00dcf1"); // Application Id of the Alexa skill
 		
 	}
 	
