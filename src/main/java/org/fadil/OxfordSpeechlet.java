@@ -111,7 +111,7 @@ public class OxfordSpeechlet implements SpeechletV2 {
 			List<String> examples = (List<String>) session.getAttribute("EXAMPLES");
 			
 			for (int i = 0; i < examples.size(); i++) {
-				examplesBuilder.append("Example " + i+1)
+				examplesBuilder.append("Example " + (i+1))
 							   .append(": ")
 							   .append(examples.get(i))
 							   .append(". ");
