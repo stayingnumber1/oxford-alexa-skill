@@ -327,8 +327,8 @@ public class OxfordSpeechlet implements SpeechletV2 {
 		try {
 			URL url = new URL(queryString);
 			URLConnection urlConnection = url.openConnection();
-			urlConnection.setRequestProperty("app_id", "85c67723");
-			urlConnection.setRequestProperty("app_key", "b805130051964d05b144b7bd63b6a15a");
+			urlConnection.setRequestProperty("app_id", "APP_ID");
+			urlConnection.setRequestProperty("app_key", "APP_KEY");
 			
 			inputStream = new InputStreamReader(urlConnection.getInputStream());
 			bufferedReader = new BufferedReader(inputStream);
